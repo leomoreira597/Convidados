@@ -6,6 +6,7 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.arccorp.convidados.R
 import com.arccorp.convidados.databinding.ActivityGuestFormBinding
+import com.arccorp.convidados.model.GuestModel
 import com.arccorp.convidados.viewModel.GuestFormViewModel
 
 class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
@@ -23,11 +24,16 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
         viewModel = ViewModelProvider(this).get(GuestFormViewModel::class.java)
 
         binding.btnSalvar.setOnClickListener(this)
+        binding.radiobtnPresent.isChecked = true
     }
 
     override fun onClick(v: View) {
         if (v.id == R.id.btn_salvar){
+            val name = binding.editNome.text.toString()
+            val presence = binding.radiobtnPresent.isChecked
+            val model = GuestModel(0, name, presence)
 
+            viewModel.insert(model)
         }
     }
 }
