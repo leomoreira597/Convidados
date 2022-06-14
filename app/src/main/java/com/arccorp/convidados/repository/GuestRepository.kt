@@ -5,15 +5,15 @@ import android.content.Context
 import com.arccorp.convidados.constans.Consts
 import com.arccorp.convidados.model.GuestModel
 
-class GuestRepository private constructor(context: Context){
+class GuestRepository private constructor(context: Context) {
 
     private val guestDataBase = GuestDataBase(context)
 
-    companion object{
+    companion object {
         private lateinit var repository: GuestRepository
 
         fun getInstance(context: Context): GuestRepository {
-            if(!::repository.isInitialized){
+            if (!::repository.isInitialized) {
                 repository = GuestRepository(context)
             }
 
@@ -25,23 +25,23 @@ class GuestRepository private constructor(context: Context){
 //
 //    }
 
-    fun insert(guest: GuestModel): Boolean{
-        return try{
+    fun insert(guest: GuestModel): Boolean {
+        return try {
             val db = guestDataBase.writableDatabase
             val values = ContentValues()
-            val presence = if(guest.presence) 1 else 0
+            val presence = if (guest.presence) 1 else 0
 
             values.put(Consts.Guest.Coluns.NAME, guest.name)
             values.put(Consts.Guest.Coluns.PRESENCE, presence)
 
-            db.insert(Consts.Guest.TABLE_NAME, null, values )
+            db.insert(Consts.Guest.TABLE_NAME, null, values)
             true
-        } catch (e: Exception){
+        } catch (e: Exception) {
             false
         }
     }
 
-    fun update(guest: GuestModel): Boolean{
+    fun update(guest: GuestModel): Boolean {
         return try {
             val db = guestDataBase.writableDatabase
             val values = ContentValues()
@@ -50,12 +50,12 @@ class GuestRepository private constructor(context: Context){
 
             db.update(Consts.Guest.TABLE_NAME, values, selection, args)
             true
-        } catch (e: Exception){
+        } catch (e: Exception) {
             false
         }
     }
 
-    fun delete(guest: GuestModel): Boolean{
+    fun delete(guest: GuestModel): Boolean {
         return try {
             val db = guestDataBase.writableDatabase
             val selection = Consts.Guest.Coluns.ID + " = ?"
@@ -63,9 +63,43 @@ class GuestRepository private constructor(context: Context){
 
             db.delete(Consts.Guest.TABLE_NAME, selection, args)
             true
-        } catch (e: Exception){
+        } catch (e: Exception) {
             false
         }
+    }
+
+    fun getAll(): List<GuestModel> {
+
+        val list = mutableListOf<GuestModel>()
+
+        try{
+            val db = guestDataBase.readableDatabase
+            val selection = arrayOf(
+                Consts.Guest.Coluns.ID,
+                Consts.Guest.Coluns.NAME,
+                Consts.Guest.Coluns.PRESENCE
+            )
+
+            val cursor = db.query(Consts.Guest.TABLE_NAME, selection, null, null, null, null, null)
+
+            if (cursor != null && cursor.count > 0) {
+                while (cursor.moveToNext()) {
+                    val id = cursor.getInt(cursor.getColumnIndex(Consts.Guest.Coluns.ID))
+                    val name = cursor.getString(cursor.getColumnIndex(Consts.Guest.Coluns.NAME))
+                    val presence = cursor.getInt(cursor.getColumnIndex(Consts.Guest.Coluns.PRESENCE))
+
+                    val guest = GuestModel(id, name, presence == 1)
+                }
+            }
+
+            cursor.close()
+        }
+        catch (e: Exception){
+            return list
+        }
+
+        return  list
+
     }
 
 }
