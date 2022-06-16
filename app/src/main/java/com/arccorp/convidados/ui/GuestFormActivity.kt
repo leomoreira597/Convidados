@@ -3,6 +3,7 @@ package com.arccorp.convidados.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.arccorp.convidados.R
 import com.arccorp.convidados.constans.Consts
@@ -31,18 +32,23 @@ class GuestFormActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View) {
-        if (v.id == R.id.btn_salvar){
+        if (v.id == R.id.btn_salvar) {
             val name = binding.editNome.text.toString()
             val presence = binding.radiobtnPresent.isChecked
             val model = GuestModel(0, name, presence)
-
             viewModel.insert(model)
+            Toast.makeText(
+                applicationContext,
+                "Convidado adicionado com sucesso",
+                Toast.LENGTH_SHORT
+            ).show()
+            finish()
         }
     }
 
-    private fun loadData(){
+    private fun loadData() {
         val bundle = intent.extras
-        if(bundle != null){
+        if (bundle != null) {
             val guestId = bundle.getInt(Consts.Guest.ID)
             viewModel.getConvidado(guestId)
         }
