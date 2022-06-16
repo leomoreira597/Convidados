@@ -19,4 +19,6 @@
     <string name="marc_presente">Presente</string>
     <string name="marc_ausente">Ausente</string>
     <string name="salvar">Salvar</string>
+    <string name="convidado">Convidado</string>
+    <string name="alo">Alo fui clicado</string>
 </resources>

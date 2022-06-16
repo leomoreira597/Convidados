@@ -55,11 +55,11 @@ class GuestRepository private constructor(context: Context) {
         }
     }
 
-    fun delete(guest: GuestModel): Boolean {
+    fun delete(id: Int): Boolean {
         return try {
             val db = guestDataBase.writableDatabase
             val selection = Consts.Guest.Coluns.ID + " = ?"
-            val args = arrayOf(guest.id.toString())
+            val args = arrayOf(id.toString())
 
             db.delete(Consts.Guest.TABLE_NAME, selection, args)
             true
@@ -88,7 +88,7 @@ class GuestRepository private constructor(context: Context) {
                     val name = cursor.getString(cursor.getColumnIndex(Consts.Guest.Coluns.NAME))
                     val presence = cursor.getInt(cursor.getColumnIndex(Consts.Guest.Coluns.PRESENCE))
 
-                    val guest = GuestModel(id, name, presence == 1)
+                    list.add(GuestModel(id, name, presence == 1))
                 }
             }
 
@@ -101,6 +101,43 @@ class GuestRepository private constructor(context: Context) {
         return  list
 
     }
+
+    fun getConvidado(id: Int): GuestModel? {
+
+        var guest: GuestModel? = null
+
+        try{
+            val db = guestDataBase.readableDatabase
+            val projection = arrayOf(
+                Consts.Guest.Coluns.ID,
+                Consts.Guest.Coluns.NAME,
+                Consts.Guest.Coluns.PRESENCE
+            )
+
+            val selection = Consts.Guest.Coluns.ID + " = ?"
+            val args = arrayOf(id.toString())
+
+            val cursor = db.query(Consts.Guest.TABLE_NAME, projection, selection, args, null, null, null)
+
+            if (cursor != null && cursor.count > 0) {
+                while (cursor.moveToNext()) {
+                    val name = cursor.getString(cursor.getColumnIndex(Consts.Guest.Coluns.NAME))
+                    val presence = cursor.getInt(cursor.getColumnIndex(Consts.Guest.Coluns.PRESENCE))
+
+                   guest = GuestModel(id, name, presence == 1)
+                }
+            }
+
+            cursor.close()
+        }
+        catch (e: Exception){
+            return guest
+        }
+
+        return  guest
+
+    }
+
 
     fun getPresent(): List<GuestModel>{
         val list = mutableListOf<GuestModel>()
