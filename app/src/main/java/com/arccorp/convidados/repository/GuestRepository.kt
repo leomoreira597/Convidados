@@ -44,11 +44,15 @@ class GuestRepository private constructor(context: Context) {
     fun update(guest: GuestModel): Boolean {
         return try {
             val db = guestDataBase.writableDatabase
+            val presence = if(guest.presence) 1 else 0
             val values = ContentValues()
+            values.put(Consts.Guest.Coluns.PRESENCE,presence)
+            values.put(Consts.Guest.Coluns.NAME, guest.name)
+
             val selection = Consts.Guest.Coluns.ID + " = ?"
             val args = arrayOf(guest.id.toString())
 
-            db.update(Consts.Guest.TABLE_NAME, values, selection, args)
+            db.update(Consts.Guest.TABLE_NAME, values, selection,args)
             true
         } catch (e: Exception) {
             false
@@ -137,7 +141,6 @@ class GuestRepository private constructor(context: Context) {
         return  guest
 
     }
-
 
     fun getPresent(): List<GuestModel>{
         val list = mutableListOf<GuestModel>()

@@ -1,6 +1,7 @@
 package com.arccorp.convidados.viewModel
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,11 +15,20 @@ class GuestFormViewModel(application: Application) : AndroidViewModel(applicatio
     private val guestModel = MutableLiveData<GuestModel>()
     val guest: LiveData<GuestModel> = guestModel
 
-    fun insert(guest: GuestModel){
-        repository.insert(guest)
+    private val _saveGuest = MutableLiveData<Boolean>()
+    val saveGuest: LiveData<Boolean> = _saveGuest
+
+
+    fun getConvidado(id: Int) {
+        guestModel.value = repository.getConvidado(id)
     }
 
-    fun getConvidado(id: Int){
-        repository.getConvidado(id)
+    fun save(guest: GuestModel) {
+        if (guest.id == 0) {
+            _saveGuest.value = repository.insert(guest)
+
+        } else {
+            _saveGuest.value = repository.update(guest)
+        }
     }
 }
