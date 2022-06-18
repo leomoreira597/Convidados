@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.arccorp.convidados.constans.Consts
 import com.arccorp.convidados.databinding.FragmentAbsentBinding
 import com.arccorp.convidados.ui.adapter.GuestsAdapter
@@ -31,6 +32,9 @@ class AbsentFragment : Fragment() {
             ViewModelProvider(this).get(GuestsViewModel::class.java)
 
         _binding = FragmentAbsentBinding.inflate(inflater, container, false)
+
+        //layout do recyclerview
+        binding.recyclerAllGuest.layoutManager = LinearLayoutManager(context)
 
         //adapter
         binding.recyclerAllGuest.adapter = adapter
